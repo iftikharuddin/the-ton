@@ -15,3 +15,9 @@ Always re-validate! 🔄 -> this is solution
   Query → outdated info by the time you use it ❌
   Carry-value → move actual tokens with message ✅
   No race conditions! 🔒
+  
+- TON Security (Return Value Instead of Rejecting): When receiving tokens, NEVER use throw_unless() - tokens will be lost forever! 💸
+  ❌ Reject → tokens vanish
+  ✅ Return to sender_address
+  ❌ NEVER return to token contract address (vulnerability!)
+  Always give back what you can't use! 🔄
