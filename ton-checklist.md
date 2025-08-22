@@ -27,3 +27,9 @@ Always re-validate! 🔄 -> this is solution
   ❌ Give 1 TON to first message → others fail
   ✅ Split gas: 0.3 + 0.3 + 0.3 + 0.1 = 1.0 TON
   Add new messages? Recalculate everything! 🔄
+  
+- TON Gas Tip: Return excess gas or your contract becomes a black hole! 🕳️
+  ✅ Auto-forward (mode 64) for simple flows
+  ❌ Manual calculation when contract pays storage/fees
+  Always reserve gas for storage fees - or your contract dies! 
+  Keep some gas for yourself to pay storage fees
