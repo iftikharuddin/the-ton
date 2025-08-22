@@ -21,3 +21,9 @@ Always re-validate! 🔄 -> this is solution
   ✅ Return to sender_address
   ❌ NEVER return to token contract address (vulnerability!)
   Always give back what you can't use! 🔄
+  
+- Think of gas as a budget that must be carefully allocated across ALL your messages, not just the first one.
+- TON Gas Tip: Unlike ETH, you must manually budget gas across your entire message cascade! ⛽
+  ❌ Give 1 TON to first message → others fail
+  ✅ Split gas: 0.3 + 0.3 + 0.3 + 0.1 = 1.0 TON
+  Add new messages? Recalculate everything! 🔄
