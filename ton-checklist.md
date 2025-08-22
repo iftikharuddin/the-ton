@@ -11,3 +11,7 @@ Step 2: 💀 Parallel tx drains 900 tokens (another user or attacker withdraw fi
 Step 3: ❌ Your code assumes 1000 still there
 Always re-validate! 🔄 -> this is solution
 ````
+- Use a Carry-Value Pattern: Don't ask "how much money?" - just take it and return what you don't need! 💰
+  Query → outdated info by the time you use it ❌
+  Carry-value → move actual tokens with message ✅
+  No race conditions! 🔒
