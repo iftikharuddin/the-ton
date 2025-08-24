@@ -91,4 +91,32 @@ Message flow analysis is critical
   
   **Tact**: No native upgrades (requires third-party traits like Ton-Dynasty) with manual storage migration still needed.
   
+- TON Integer Security - Key Points for Researchers 
+  
+  **1. Storage-Runtime Type Mismatch Risk**
+  - Variables stored as `uint32` become `int257` at runtime → potential confusion in security analysis
+  - Audit both storage constraints AND runtime behavior
+  
+  **2. Overflow Still Possible (Though Rare)**
+  - `2^256 × 2^256` will crash transaction, not wrap silently
+  - **Good**: No silent corruption, **Bad**: DoS if attacker triggers overflow
+  
+  **3. Integer Division Truncation**  
+  - `3001 / 1000 = 3` (not 3.001) → precision loss in financial calculations
+  - Multiply before divide: `(a * b) / c` not `(a / c) * b`
+  
+  **4. Nano-ton Decimal Confusion**
+  - `ton("1.25")` = 1,250,000,000 nano-tons
+  - Off-by-factor errors common when mixing TON units and raw integers
+  
+  **5. Cross-Size Arithmetic Edge Cases**
+  - `uint8` + `int256` works at runtime but storage constraints still apply
+  - Check bounds when storing results back to smaller types
+  
+  **6. No Implicit Type Conversion**
+  - Unlike Solidity, no automatic casting → explicit validation needed
+  - Missing bounds checking when assigning 257-bit results to smaller storage
+  
+  **Key Takeaway**: TON's "safe by default" math prevents silent corruption but creates new DoS vectors and precision loss patterns unique to this blockchain.
+
   more data from this checklist: https://github.com/PositiveSecurity/ton-audit-guide
