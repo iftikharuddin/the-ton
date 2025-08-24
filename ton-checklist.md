@@ -86,3 +86,7 @@ Message flow analysis is critical
   Unbounded loops = DoS attacks
   Low-level nativeSendMessage = error-prone
   Use high-level send(), add bounce handling, limit loops! 
+
+- **FunC**: Native upgrade support via `set_code()`/`set_data()` with manual storage migration required.
+  
+  **Tact**: No native upgrades (requires third-party traits like Ton-Dynasty) with manual storage migration still needed.
