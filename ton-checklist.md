@@ -63,4 +63,18 @@ Message flow analysis is critical
   Contract A sends: msg1→B, msg2→C
   Arrival order: Could be C then B, or B then C! 
   Security risk: State races, price manipulation, auth bypasses
-  Solution: Carry-value pattern, sequence numbers, timeouts! 🛡️
+  Solution: Carry-value pattern, sequence numbers, timeouts! 
+  
+- TON Common Bugs: New blockchain = new mistakes! 
+  
+  No secrets on-chain (it's public!)
+  Missing bounce handlers = lost tokens
+  Math order matters: x/zy ≠ xy/z
+  No built-in nonces = replay attacks
+  Cell limits: 1023 bits, 4 refs max
+  Master carry-value pattern! 
+
+- TON Randomness Security: Blockchain "random" isn't truly random! 
+  ❌ Validators can manipulate outcomes
+  ❌ nativeRandom() without nativePrepareRandom() = predictable
+  ✅ Use randomize_lt() in FunC, randomInt() in Tact
