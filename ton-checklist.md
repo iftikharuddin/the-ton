@@ -53,3 +53,14 @@ Always re-validate! 🔄 -> this is solution
 Most common bugs: missing auth checks, no bounce handling, partial execution risks
 TON's async model = fundamentally different security challenges vs ETH
 Message flow analysis is critical
+
+- It is necessary to pay attention to the processing of external messages (from the Internet) by the function `recv_external` (in smart contracts in the FunC language): whether the function is applied accept_message()only after all the necessary checks. This is necessary to prevent gas-sucking attacks, since after the call, accept_message()the contract pays for all further operations. External messages have no context (for example, sender, value), 10,000 gas units are given as a credit for processing, which is enough to check the signature and accept the message. Of course, everything depends on the contract design, but if possible, it makes sense to write a contract without the ability to accept external messages. The function recv_externalis one of the entry points that needs to be checked several times.
+  
+- Never assume messages will arrive in the order you sent them! 
+- Your contract should work correctly regardless of message delivery order (add proper code)
+- Always test with randomized message ordering to catch race conditions
+- TON Message Ordering: UNPREDICTABLE delivery! 
+  Contract A sends: msg1→B, msg2→C
+  Arrival order: Could be C then B, or B then C! 
+  Security risk: State races, price manipulation, auth bypasses
+  Solution: Carry-value pattern, sequence numbers, timeouts! 🛡️
