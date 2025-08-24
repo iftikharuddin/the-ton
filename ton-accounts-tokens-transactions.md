@@ -25,3 +25,14 @@ TON Wallet Security: Every transaction needs 3 checks!
 Same private key = multiple addresses via different subwallets
 
 Complex security = more attack vectors! 
+
+### Jetton Tokens
+
+Jetton is TON's token standard where each user gets their own personal wallet contract (unlike ERC-20 where everyone shares one contract).
+
+TON Jettons: Distributed token architecture! 
+
+- Unlike ERC-20 (1 contract), each user gets personal jetton vault
+- Transfer = 4 contracts = 4 potential failure points
+- Benefits: Scalability 
+- Risks: Partial execution, gas manipulation, state desync ⚠
