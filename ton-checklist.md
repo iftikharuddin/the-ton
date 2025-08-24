@@ -33,3 +33,8 @@ Always re-validate! 🔄 -> this is solution
   ❌ Manual calculation when contract pays storage/fees
   Always reserve gas for storage fees - or your contract dies! 
   Keep some gas for yourself to pay storage fees
+  
+- TON Storage: Organize like a tidy room! Use Nested Storage
+  ❌ Image 2 ( which was wrong approach): Dump all data every time (messy drawer)
+  ✅ Image 1 ( correct and optimised approach ): Load only needed groups (organized drawers)
+  Group related data, load selectively = cheaper gas & cleaner code! 
