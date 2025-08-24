@@ -78,3 +78,11 @@ Message flow analysis is critical
   ❌ Validators can manipulate outcomes
   ❌ nativeRandom() without nativePrepareRandom() = predictable
   ✅ Use randomize_lt() in FunC, randomInt() in Tact
+
+- TON Message Problems: Complex = Dangerous!️
+  
+  Missing bounce handlers = tokens burn forever
+  Wrong message modes = balance drain
+  Unbounded loops = DoS attacks
+  Low-level nativeSendMessage = error-prone
+  Use high-level send(), add bounce handling, limit loops! 
