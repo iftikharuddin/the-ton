@@ -90,3 +90,5 @@ Message flow analysis is critical
 - **FunC**: Native upgrade support via `set_code()`/`set_data()` with manual storage migration required.
   
   **Tact**: No native upgrades (requires third-party traits like Ton-Dynasty) with manual storage migration still needed.
+  
+  more data from this checklist: https://github.com/PositiveSecurity/ton-audit-guide
