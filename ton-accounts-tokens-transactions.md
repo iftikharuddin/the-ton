@@ -35,4 +35,16 @@ TON Jettons: Distributed token architecture!
 - Unlike ERC-20 (1 contract), each user gets personal jetton vault
 - Transfer = 4 contracts = 4 potential failure points
 - Benefits: Scalability 
-- Risks: Partial execution, gas manipulation, state desync ⚠
+- Risks: Partial execution, gas manipulation, state desync 
+
+### Transactions
+
+Key transaction features include:
+
+1. Asynchronous Nature: trxs in TON are not completed in a single call; they may require a series of calls to multiple different smart contracts through message passing. Due to different routing in the shard chains, TON cannot guarantee the order of message delivery between multiple smart contracts.
+
+2. Fees: The asynchronous nature also brings the issue of unpredictable fee consumption. Therefore, when initiating a transaction, the wallet usually sends extra tokens as fees. If the called contract has a good fee handling mechanism, the remaining fees will be refunded to the user’s wallet. Users might observe their wallet tokens suddenly decreasing and then increasing again after a few minutes, which explains this behavior.
+
+3. Bounce: Bounce is an error-handling mechanism for contracts. If the called contract does not exist or throws an error, and if the transaction is set to be bounceable, a bounced message will be returned to the calling contract. For example, if a user initiates a transfer and the call process fails, a bounce message is needed so that the user’s wallet contract can restore its balance. Almost all internal messages sent between smart contracts should be bounceable, which means their “bounce” bit should be set.
+
+Never assume messages arrive in the order you sent them - design your contracts to work correctly regardless of message ordering!
