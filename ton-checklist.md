@@ -1,5 +1,9 @@
 ## Checklist of issues I have noticed during auditing TON protocols
 
+refs: 
+
+https://coinmarketcap.com/community/articles/63f5e0b394b07d2baed4aa49/
+
 - **Partial execution:** ETH reverts everything if one step fails, TON processes each message independently. In TON, tokens can vanish during transfers due to partial execution. Solution is to add bounce flag and allow recovery.
 - TON Security Tip: Do ALL validation at entry point, not during message cascade.
   Bounced messages help but have limits - they need gas & don't chain. Plan for failures! 
@@ -38,3 +42,9 @@ Always re-validate! 🔄 -> this is solution
   ❌ Image 2 ( which was wrong approach): Dump all data every time (messy drawer)
   ✅ Image 1 ( correct and optimised approach ): Load only needed groups (organized drawers)
   Group related data, load selectively = cheaper gas & cleaner code! 
+  
+- TON Tip: Always use end_parse() when reading data! 
+  ❌ Silent bugs from incomplete parsing
+  ✅ Immediate error if data left unread
+  Catches: forgotten fields, format changes, malicious data
+  1 line of code = hours of debugging saved! 
