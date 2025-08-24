@@ -49,3 +49,7 @@ Always re-validate! 🔄 -> this is solution
   Catches: forgotten fields, format changes, malicious data
   1 line of code = hours of debugging saved! 
   
+- Professional TON Auditor: "First step = map ALL message chains, assume each can fail" 
+Most common bugs: missing auth checks, no bounce handling, partial execution risks
+TON's async model = fundamentally different security challenges vs ETH
+Message flow analysis is critical
