@@ -119,4 +119,7 @@ Message flow analysis is critical
   
   **Key Takeaway**: TON's "safe by default" math prevents silent corruption but creates new DoS vectors and precision loss patterns unique to this blockchain.
 
+- TON Blockchain is an asynchronous blockchain, which means that smart contracts can interact with each other only by sending messages.
+  
+
   more data from this checklist: https://github.com/PositiveSecurity/ton-audit-guide
