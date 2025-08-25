@@ -96,5 +96,110 @@ If the transaction reverts, unused excess value will be sent back to sender on t
 You can also refund the excess if the transaction succeeds by sending it back using self.reply() in a response message. This is the best way to guarantee senders are only paying for the exact gas that their message consumed.
 
 
+#### Messages Between Contracts
+Different contracts can communicate with each other only by sending messages
 
+TON uses Actor Model - contracts are independent actors
+
+One contract sends message, another receives it and change state or act on it
+
+Contracts can't directly read each other's state - only communicate via messages e.g
+````
+// ❌ This doesn't work:
+let counterValue = Counter.get_value();  // Can't call getters!
+
+// ✅ Must send message instead:
+send("query" to Counter);  // Send message, wait for reply
+````
+
+The Rule: Original sender pays for EVERYTHING!
+````
+User sends "Reach 5" with 1.0 TON gas
+├── Message 1: BulkAdder processes (uses 0.01 TON)
+├── Message 2: Counter processes (uses 0.01 TON) 
+├── Message 3: BulkAdder processes (uses 0.01 TON)
+└── ... 13 messages total (uses 0.13 TON)
+Final: User paid 0.13 TON, gets 0.87 TON refunded
+````
+
+How Gas Forwarding Works in the example contract? ref https://tact-by-example.org/03-messages-between-contracts
+````
+send(SendParameters{
+    to: msg.counter,
+    value: 0,  // Don't send specific amount
+    mode: SendRemainingValue,  // Forward ALL remaining gas!
+    body: "query".asComment()
+});
+````
+Translation: "Send this message and give it all my remaining gas"
+
+#### Sending TON Coins
+This example contract (ref https://tact-by-example.org/03-send-coins) allows to withdraw TON coins from its balance. Notice that only the deployer is permitted to do that, otherwise this money could be stolen.
+
+The withdrawn funds are sent as value on an outgoing message to the sender. It's a good idea to set the bounce flag explicitly to true (although this also the default), so if the outgoing message fails for any reason, the money would return to the contract.
+
+Contracts need to have a non-zero balance so they can pay storage costs occasionally, otherwise they may get deleted. This contract can make sure you always leave 0.01 TON which is enough to store 1 KB of state for 2.5 years.
+
+
+#### The intricate math
+`myBalance()` is the contract balance including the value for gas sent on the incoming message. myBalance() - context().value is the balance without the value for gas sent on the incoming message.
+
+Send mode SendRemainingValue will add to the outgoing value any excess left from the incoming message after all gas costs are deducted from it.
+
+Send mode SendRemainingBalance will ignore the outgoing value and send the entire balance of the contract. Note that this will not leave any balance for storage costs so the contract may be deleted.
+
+in simple words when this mode is set -> SendRemainingBalance (Mode: Send Everything)
+````
+mode: SendRemainingBalance  
+// Ignores 'value' field, sends ENTIRE contract balance
+````
+Use case: "Empty the piggy bank completely"
+
+and if SendRemainingValue (Mode: Send Amount + Leftover Gas)
+````
+mode: SendRemainingValue
+// Sends specified 'value' + any leftover gas from the transaction
+````
+Use case: "Send specific amount, plus give back any change"
+
+#### Loops
+Tact does not support traditional for loops, but its loop statements are equivalent and can easily implement the same things. Also note that Tact does not support break and continue statements in loops like some languages.
+
+The repeat loop statement input number must fit within an int32, otherwise an exception will be thrown.
+
+The condition of the while and until loop statements can be any boolean expression.
+
+Smart contracts consume gas for execution. The amount of gas is proportional to the number of iterations. The last example iterates too many times and reverts due to an out of gas exception.
+
+#### Functions
+To make your code more readable and promote code reuse, you're encouraged to divide it into functions.
+
+Functions in Tact start with the fun keyword. Functions can receive multiple input arguments and can optionally return a single output value. You can return a struct if you want to return multiple values.
+
+Global static functions are defined outside the scope of contracts. You can call them from anywhere, but they can't access the contract or any of the contract state variables.
+
+Contract methods are functions that are defined inside the scope of a contract. You can call them only from other contract methods like receivers and getters. They can access the contract's state variables.
+
+#### Optionals
+Optionals are variables or struct fields that can be null and don't necessarily hold a value. They are useful to reduce state size when the variable isn't necessarily used.
+
+You can make any variable optional by adding ? after its type.
+
+Optional variables that are not defined hold the null value. You cannot access them without checking for null first.
+
+If you're certain an optional variable is not null, append to the end of its name !! to access its value. Trying to access the value without !! will result in a compilation error.
+
+#### Maps
+Maps are a dictionary type that can hold an arbitrary number of items, each under a different key.
+
+The keys in maps can either be an Int type or an Address type.
+
+You can check if a key is found in the map by calling the get() method. This will return null if the key is missing or the value if the key is found. Replace the value under a key by calling the set() method.
+
+Integers in maps stored in state currently use the largest integer size (257-bit). Future versions of Tact will let you optimize the encoding size.
+
+#### Limit the number of items
+Maps are designed to hold a limited number of items. Only use a map if you know the upper bound of items that it may hold. It's also a good idea to write a test to add the maximum number of elements to the map and see how gas behaves under stress.
+
+If the number of items is unbounded and can potentially grow to billions, you'll need to architect your contract differently. 
 
