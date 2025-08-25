@@ -203,3 +203,97 @@ Maps are designed to hold a limited number of items. Only use a map if you know 
 
 If the number of items is unbounded and can potentially grow to billions, you'll need to architect your contract differently. 
 
+#### Arrays
+You can implement simple arrays in Tact by using the map type.
+
+To create an array, define a map with an Int type as the key. This key will represent the index in the array. Additionally, include a variable to keep track of the number of items in the array.
+
+The example contract (https://tact-by-example.org/04-arrays) records the last five timestamps when the timer message was received. These timestamps are stored in a cyclical array, implemented as a map.
+
+#### Current Time
+Other blockchains: Use block numbers to track time
+
+TON: Uses real clock time with now()
+
+Why: TON has multiple chains running at different speeds, so block numbers don't work reliably.
+````
+// ❌ Expensive storage
+timestamp: Int = now();
+
+// ✅ Cheap storage (good until 2106)
+timestamp: Int as uint32 = now();
+````
+#### TON's Architecture:
+Masterchain: Controls everything, slower blocks
+
+Workchains: Process transactions, faster blocks
+
+Shards: Even smaller pieces, variable speed
+
+Block speeds vary in TON → Block numbers are unreliable for timing
+
+Time is universal → Same everywhere WHILE Multiple chains = multiple block numbers, so using block number is problem
+
+#### Decimal Point
+All numbers in Tact are integers. Floating point types are not used in smart contracts because they're unpredictable.
+
+Arithmetics with dollars, for example, requires 2 decimal places. How can we represent the number 1.25 if we can only work with integers? The answer is to work with cents. So 1.25 becomes 125. We just remember that the two lowest digits are coming after the decimal point.
+
+In the same way, working with TON coins has 9 decimal places instead of 2. So the amount 1.25 TON is actually the number 1250000000 - we call these nano-tons instead of cents.
+
+#### Calculating interest
+
+This example (https://tact-by-example.org/04-decimal-point) calculates the earned interest over a deposit of 500 TON coins. The yearly interest rate in the example is 3.25%.
+
+Since we can't hold the number 3.25 we will use thousandth of a percent as unit (percent-mille). So 3.25% becomes 3250 (3.25 * 1000).
+
+On withdraw, to calculate earned interest, we multiply the amount by the fraction of a year that passed (duration in seconds divided by total seconds in a year) and then by the interest rate divided by 100,000 (100% in percent-mille, meaning 100 * 1000).
+
+Info: Notice that total is returned in nano-tons.
+
+#### Decimals in TON
+In TON smart contracts can't use decimals like 1.25 or 3.14 because they're unpredictable on different computers.
+
+Solution: Use smaller units instead!
+
+````
+Real amount: $1.25
+Computer stores: 125 (cents)
+Rule: Divide by 100 to get real dollars
+````
+Translation: Instead of storing $1.25, store 125 cents
+
+Now How TON Handles Coins?
+
+Instead of storing 1.25 TON, store 1,250,000,000 nano-tons. Uses 9 decimals
+
+````
+Real amount: 1.25 TON
+Computer stores: 1,250,000,000 (nano-tons)
+Rule: Divide by 1,000,000,000 to get real TON
+````
+
+#### The TON Decimal System
+TON's 9 Decimal Places:
+
+````
+1 TON = 1,000,000,000 nano-tons
+0.1 TON = 100,000,000 nano-tons
+0.01 TON = 10,000,000 nano-tons
+0.001 TON = 1,000,000 nano-tons
+````
+Easy Conversion
+````
+let amount = ton("1.25");     // Easy way to write 1.25 TON
+dump(amount);                 // Shows: 1250000000 (nano-tons)
+````
+
+Think of it: Like cents, but with 9 zeros instead of 2!
+
+- Use nano-tons for TON amounts (×1,000,000,000)
+- Use percent-mille for rates (×1,000)
+- Integer math only - no floating point
+- Divide back when showing to users
+
+
+
