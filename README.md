@@ -25,3 +25,63 @@ Contract methods named receive() are the handlers that process each incoming mes
 
 Messages are defined using the message keyword. They can carry input arguments. Notice that for integers, you must define the encoding size, just like in state variables. When somebody sends the message, they serialize it over the wire.
 
+#### Textual Messages
+
+Most of the messages we saw in the previous example were defined with the message keyword. They are considered binary messages. This means that when somebody wants to send them, they serialize them into bits and bytes of binary data.
+
+The disadvantage with binary messages is that they're not human readable.
+
+#### Hardware wallets and blind signing
+
+When working with dangerous contracts that handle a lot of money, users are encouraged to use hardware wallets like Ledger. Hardware wallets cannot decode binary messages to confirm to the user what they're actually signing.
+
+Tact supports textual messages for this reason, since they're human readable and can easily be confirmed with users, eliminating phishing risks.
+
+Textual messages are limited because they cannot contain arguments. Future versions of Tact will add this functionality.
+
+#### Using the comment field
+
+If you've ever made a transfer using a TON wallet, you probably noticed that you can add a comment (also known as a memo or a tag). This is how textual messages are sent.
+
+Receivers for textual messages just define the string that they expect. Tact automatically does string matching and calls the matching receiver when a comment message arrives.
+
+#### Structs
+The order of fields does not matter. Unlike other languages, Tact does not have any padding between fields.
+
+Structs allow you to combine multiple primitives together in a more semantic way. They're a great tool to make your code more readable.
+
+Structs can define complex data types that contain multiple fields of different types. They can also be nested.
+
+Structs can also include both default fields and optional fields. This can be quite useful when you have many fields but don't want to keep respecifying them.
+
+Structs are also useful as return values from getters or other internal functions. They effectively allow a single getter to return multiple return values.
+
+#### Structs vs. messages
+Structs and messages are almost identical with the only difference that messages have a 32-bit header containing their unique numeric id. This allows messages to be used with receivers since the contract can tell different types of messages apart based on this id.
+
+
+#### Message Sender
+Every incoming message is sent from some contract that has an address.
+
+You can query the address of the message sender by calling `sender()`. Alternatively, the address is also available through context().sender.
+
+The sender during execution of the `init()` method of the contract is the address who deployed the contract.
+
+#### Authenticating messages
+The main way to authenticate an incoming message, particularly for priviliges actions, is to verify the sender. This field is secure and impossible to fake.
+
+#### Throwing Errors
+Processing an incoming message in a transaction isn't always successful. The contract may encounter some error and fail.
+
+This can be due to an explicit decision of the contract author, usually by writing a require() on a condition that isn't met, or this may happen implicitly due to some computation error in run-time, like a math overflow.
+
+When an error is thrown, the transaction reverts. This means that all persistent state changes that took place during this transaction, even those that happened before the error was thrown, are all reverted and return to their original values.
+
+#### Notifying the sender about the error
+How would the sender of the incoming message know that the message they had sent was rejected due to an error?
+
+All communication is via messages, so naturally the sender should receive a message about the error. TON will actually return the original message back to the sender and mark it as bounced - just like a snail mail letter that couldn't be delivered.
+
+
+
+
